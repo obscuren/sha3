@@ -128,7 +128,7 @@ func (d *digest) Write(p []byte) (int, error) {
 
                 // This inner loop absorbs input bytes into the state in groups of 8, converted to uint64s.
                 for lane := firstLane; lane < lastLane; lane++ {
-                        d.a[lane] ^= binary.LittleEndian.Uint64(p[:laneSize])
+                        d.a[lane] ^= binary.BigEndian.Uint64(p[:laneSize])
                         p = p[laneSize:]
                 }
                 d.absorbed += (lastLane - firstLane) * laneSize
@@ -188,7 +188,7 @@ func (d *digest) squeeze(in []byte, toSqueeze int) []byte {
 
         for len(out) > 0 {
                 for i := 0; i < d.rate() && len(out) > 0; i += laneSize {
-                        binary.LittleEndian.PutUint64(out[:], d.a[i/laneSize])
+                        binary.BigEndian.PutUint64(out[:], d.a[i/laneSize])
                         out = out[laneSize:]
                 }
                 if len(out) > 0 {
